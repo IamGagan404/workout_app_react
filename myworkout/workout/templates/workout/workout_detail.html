@@ -1,0 +1,47 @@
+
+<p> {{workout.date}} </p>
+<p> {{workout.remark}} </p>
+
+<a href="{% url 'workout_summery' workout.pk %}">Summery</a>
+
+<hr>
+<h3> Add Exercise </h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add</button>
+</form>
+
+
+<hr>
+<h2>Exercises</h2>
+<ul>
+    {% for we in exercises %}
+    <li>
+        {{ we.order_index }} - {{ we.exercise.name }}
+        {% if we.notes %}
+          - {{ we.notes }}
+        {% endif %}
+        <a href="{% url 'add_set' we.pk %}">Add Sets</a>
+        <a href="{% url 'delete_workout' we.pk %}">
+            Delete
+        </a>
+        <a href="{% url 'manage_sets' we.pk %}">Add multiple </a>
+        <ul>
+            {% for s in we.sets.all %}
+                <li>
+                    Set {{ s.set_number }}: {{ s.weight }} kg × {{ s.reps }}
+                    <a href="{% url 'delete_set' s.pk %}"> Delete </a>
+                </li>
+
+            {% empty %}
+                <li>No sets yet.</li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% empty %}
+        <p> no exercises </p>
+    {% endfor %}
+</ul>
+
+

@@ -1,0 +1,34 @@
+{{workout.date}}
+{{workout.remark}}
+<p>
+    {% for bp in workout.focus_body_parts.all %}
+        {{ bp.name }}
+    {% empty %}
+        <p> Misc</p>
+    {% endfor %}
+</p>
+
+<ul>
+    {% for we in exercises %}
+    <li>
+            {{ we.order_index }} - {{ we.exercise.name }}
+            {% if we.notes %}
+            - {{ we.notes }}
+            {% endif %}
+        <ul>
+            {% for s in we.sets.all %}
+                <li> Set {{ s.set_number }}: {{ s.weight }} kg × {{ s.reps }} </li>
+        
+            {% empty %}
+                <p> No sets done</p>
+            {% endfor %}
+        </ul>
+    {% empty %}
+        <p> No exercises done </p>
+    {% endfor %}
+    </li>
+</ul>
+
+<a href="{% url 'workout_detail' workout.pk%}">Back to edit </a>
+<a href="{% url 'workout_list' %}">All </a>
+

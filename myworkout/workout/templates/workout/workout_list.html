@@ -1,0 +1,23 @@
+<h3> List of all workouts</h3>
+
+<ul>
+{% for w in workouts %}
+    <li>
+        Workout on {{ w.date }} - {{w.remark}} 
+        
+        <p>
+            {% for bp in w.focus_body_parts.all %}
+                {{ bp.name }}
+            {% empty %}
+                <p> Misc</p>
+            {% endfor %}
+        </p>
+        
+        <a href="{% url 'workout_summery' w.pk %}"> Go </a> 
+    </li>
+{% empty %}
+    <p>No workouts </p>
+{% endfor %}    
+</ul>
+
+
