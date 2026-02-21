@@ -1,12 +1,17 @@
 from rest_framework import serializers
-from .models import Workout,WorkoutExercise,SetEntry,BodyPart
+from .models import Workout,WorkoutExercise,SetEntry,BodyPart,Exercise
 
 
 
-class WorkoutExerciseSerializer(serializers.ModelSerializer):
+# class WorkoutExerciseSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = WorkoutExercise
+#         fields = "__all__"
+
+class ExerciseSerializer(serializers.ModelSerializer):
     class Meta:
-        model = WorkoutExercise
-        fields = "__all__"
+        model = Exercise
+        fields = ["id", "name"]
 
 class SetEntrySerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,6 +24,7 @@ class BodyPartSerializer(serializers.ModelSerializer):
         fields = "__all__"       
 
 class WorkoutExerciseSerializer(serializers.ModelSerializer):
+    exercise = ExerciseSerializer(read_only=True)
     sets = SetEntrySerializer(many=True, read_only=True)
 
     class Meta:

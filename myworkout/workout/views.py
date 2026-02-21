@@ -185,6 +185,7 @@ class WorkoutViewSet(viewsets.ModelViewSet):
         .prefetch_related(
             "focus_body_parts",
             "workout_exercises__sets",
+            "workout_exercises__exercise"
         )
         .all()
     )
