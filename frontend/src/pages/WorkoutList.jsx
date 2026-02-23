@@ -22,6 +22,11 @@ function WorkoutList(){
     if (loading) return <p> Loading </p>
     
     return(
+        <div>
+        <Link to="/create/">
+            <button> Create Workout </button>
+        </Link>
+
         <div style={{padding: "20px"}}>
             <h1>Workouts</h1>
 
@@ -30,13 +35,16 @@ function WorkoutList(){
             <ul>
                 {workouts.map((workout) =>(
                     <li key={workout.id}>
-                        <Link to={`/workouts/${workout.id}`}>
+                        <div><Link to={`/workouts/${workout.id}`}>
                             {workout.date}
                         </Link>
+                        <p style={{ alignItems: "flex-start"}} >{workout.remark}</p>
+                        </div>
                     </li>
                 ))}
             </ul>
 
+        </div>
         </div>
     )
 }

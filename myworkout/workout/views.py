@@ -172,12 +172,13 @@
 
 
 from rest_framework import viewsets
-from .models import Workout, WorkoutExercise, SetEntry, BodyPart
+from .models import Workout, WorkoutExercise, SetEntry, BodyPart,Exercise
 from .serializers import (
     WorkoutSerializer,
     WorkoutExerciseSerializer,
     SetEntrySerializer,
-    BodyPartSerializer
+    BodyPartSerializer,
+    ExerciseSerializer
 )
 class WorkoutViewSet(viewsets.ModelViewSet):
     queryset = (
@@ -205,6 +206,10 @@ class SetEntryViewSet(viewsets.ModelViewSet):
 class BodyPartViewSet(viewsets.ModelViewSet):
     queryset = BodyPart.objects.all()
     serializer_class = BodyPartSerializer
+
+class ExcerciseViewSet(viewsets.ModelViewSet):
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
 
 
 
