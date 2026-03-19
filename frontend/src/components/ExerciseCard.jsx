@@ -17,7 +17,7 @@ function ExerciseCard({ we, refreshWorkout }) {
 // "http://127.0.0.1:8000/api/sets/",
     try {
       await axios.post(
-        `${API}/api/sets`,
+        `${API}/api/sets/`,
         
         {
           workout_exercise: we.id,
