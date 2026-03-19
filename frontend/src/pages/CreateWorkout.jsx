@@ -11,9 +11,11 @@ function CreateWorkout(){
     const [error,setError] = useState(null);
     const navigate = useNavigate();
 
+    const API = import.meta.env.VITE_API_URL;
+
     useEffect(() => {
         axios
-            .get("http://127.0.0.1:8000/api/body-parts/")
+            .get(`${API}/api/body-parts/`)
             .then((res) => {
             setBodyParts(res.data);
             })
@@ -32,7 +34,7 @@ function CreateWorkout(){
         try{
             // console.log(selectedParts);
             const res = await axios.post(
-                "http://127.0.0.1:8000/api/workouts/",
+                `${API}/api/workouts/`,
                 {
                     date,
                     remark,

@@ -10,6 +10,8 @@ function WorkoutList() {
     return wk.focus_body_parts.map(bp => bp.name).join(" • ");
   };
 
+  const API = import.meta.env.VITE_APP_URL
+
   const colorMap = {
   Chest: "#fecaca",
   Back: "#bfdbfe",
@@ -19,7 +21,7 @@ function WorkoutList() {
 };
   const fetchWorkouts = () => {
     axios
-      .get("http://127.0.0.1:8000/api/workouts/")
+      .get(`${API}/api/workouts/`)
       .then((res) => {
         setWorkouts(res.data);
         setLoading(false);
@@ -107,7 +109,7 @@ function WorkoutList() {
 
               try {
                 await axios.delete(
-                  `http://127.0.0.1:8000/api/workouts/${workout.id}/`
+                  `${API}/api/workouts/${workout.id}/`
                 );
                 fetchWorkouts();
               } catch (err) {

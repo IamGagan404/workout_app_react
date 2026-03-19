@@ -7,15 +7,18 @@ function ExerciseCard({ we, refreshWorkout }) {
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [noteValue, setNoteValue] = useState(we.notes || "");
 
+  const API = import.meta.env.VITE_API_URL;
+  
   const handleAddSet = async () => {
     if (!weight || !reps) {
       alert("Enter weight and reps");
       return;
     }
-
+// "http://127.0.0.1:8000/api/sets/",
     try {
       await axios.post(
-        "http://127.0.0.1:8000/api/sets/",
+        `${API}/api/sets`,
+        
         {
           workout_exercise: we.id,
           weight: parseFloat(weight),
@@ -34,7 +37,7 @@ function ExerciseCard({ we, refreshWorkout }) {
   const handleUpdateNote = async () => {
   try {
     await axios.patch(
-      `http://127.0.0.1:8000/api/workout-exercises/${we.id}/`,
+      `${API}/api/workout-exercises/${we.id}/`,
       { notes: noteValue }
     );
     setIsEditingNote(false);
@@ -49,7 +52,7 @@ function ExerciseCard({ we, refreshWorkout }) {
 
     try {
       await axios.delete(
-        `http://127.0.0.1:8000/api/workout-exercises/${we.id}/`
+        `${API}/api/workout-exercises/${we.id}/`
       );
       refreshWorkout();
     } catch (err) {
@@ -62,7 +65,7 @@ function ExerciseCard({ we, refreshWorkout }) {
 
     try {
       await axios.delete(
-        `http://127.0.0.1:8000/api/sets/${setId}/`
+        `${API}/api/sets/${setId}/`
       );
       refreshWorkout();
     } catch (err) {

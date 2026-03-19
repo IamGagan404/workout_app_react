@@ -14,9 +14,11 @@ function WorkoutDetail() {
   const [selectedExercise, setSelectedExercise] = useState("");
   const [notes, setNotes] = useState("");
 
+  const API = import.meta.env.VITE_API_URL
+
   const fetchWorkout = () => {
     axios
-      .get(`http://127.0.0.1:8000/api/workouts/${id}/`)
+      .get(`${API}/api/workouts/${id}/`)
       .then((res) => {
         setWorkout(res.data);
         setLoading(false);
@@ -31,7 +33,7 @@ function WorkoutDetail() {
     fetchWorkout();
 
     axios
-      .get("http://127.0.0.1:8000/api/exercises/")
+      .get(`${API}/api/exercises/`)
       .then((res) => setExercises(res.data))
       .catch((err) => console.error(err));
   }, [id]);
@@ -44,7 +46,7 @@ function WorkoutDetail() {
 
     try {
       await axios.post(
-        "http://127.0.0.1:8000/api/workout-exercises/",
+        `${API}/api/workout-exercises/`,
         {
           workout: Number(id),
           exercise_id: parseInt(selectedExercise),

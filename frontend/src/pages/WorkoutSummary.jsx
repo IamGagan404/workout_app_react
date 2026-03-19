@@ -9,9 +9,11 @@ function WorkoutSummary() {
   const [workout, setWorkout] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const API = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/workouts/${id}/`)
+      .get(`${API}/api/workouts/${id}/`)
       .then((res) => {
         setWorkout(res.data);
         setLoading(false);
