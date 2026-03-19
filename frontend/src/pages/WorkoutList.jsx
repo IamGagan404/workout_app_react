@@ -10,7 +10,7 @@ function WorkoutList() {
     return wk.focus_body_parts.map(bp => bp.name).join(" • ");
   };
 
-  const API = import.meta.env.VITE_APP_URL
+  const API = import.meta.env.VITE_API_URL
 
   const colorMap = {
   Chest: "#fecaca",
