@@ -180,6 +180,9 @@ from .serializers import (
     BodyPartSerializer,
     ExerciseSerializer
 )
+from django.db.models import F
+
+
 class WorkoutViewSet(viewsets.ModelViewSet):
     queryset = (
         Workout.objects
@@ -201,6 +204,15 @@ class WorkoutExerciseViewSet(viewsets.ModelViewSet):
 class SetEntryViewSet(viewsets.ModelViewSet):
     queryset = SetEntry.objects.all()
     serializer_class = SetEntrySerializer
+
+    def perform_destroy(self, instance):
+        workout_exercise = instance.workout_exercise
+        deleted_number = instance.set_number
+        instance.delete()
+
+        workout_exercise.sets.filter(
+            set_number__gt=deleted_number
+        ).update(set_number=F("set_number") - 1)
 
 
 class BodyPartViewSet(viewsets.ModelViewSet):

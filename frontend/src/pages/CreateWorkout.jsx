@@ -30,7 +30,7 @@ function CreateWorkout(){
         setError(null)
 
         try{
-            console.log(selectedParts);
+            // console.log(selectedParts);
             const res = await axios.post(
                 "http://127.0.0.1:8000/api/workouts/",
                 {

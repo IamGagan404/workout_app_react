@@ -1,46 +1,46 @@
-import { useState,useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-import ExerciseCard from "../componenets/ExerciseCard";
-import { useNavigate } from "react-router-dom";
+import ExerciseCard from "../components/ExerciseCard";
 
+function WorkoutDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-function WorkoutDetail(){
-    const { id } = useParams()
-    const [workout, setWorkout] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const [workout, setWorkout] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    const [exercises, setExercises] = useState(null);
-    const [selectedExercise, setSelectedExercise] = useState("")
-    const [notes,setNotes] = useState("")
+  const [exercises, setExercises] = useState([]);
+  const [selectedExercise, setSelectedExercise] = useState("");
+  const [notes, setNotes] = useState("");
 
-    const navigate = useNavigate();
+  const fetchWorkout = () => {
+    axios
+      .get(`http://127.0.0.1:8000/api/workouts/${id}/`)
+      .then((res) => {
+        setWorkout(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  };
 
-    const fetchWorkout = ()=>{
-        axios.get(`http://127.0.0.1:8000/api/workouts/${id}/`)
-        .then((res) => {
-            setWorkout(res.data);
-            setLoading(false);   
-        })
-        .catch((err) => {
-            console.error(err);
-            setLoading(false);
-        });
-    };
+  useEffect(() => {
+    fetchWorkout();
 
-    useEffect(() => {
-      axios
-        .get("http://127.0.0.1:8000/api/exercises/")
-        .then((res) => setExercises(res.data))
-        .catch((err) => console.error(err));
-    }, []);
+    axios
+      .get("http://127.0.0.1:8000/api/exercises/")
+      .then((res) => setExercises(res.data))
+      .catch((err) => console.error(err));
+  }, [id]);
 
-    useEffect(() => {
-      fetchWorkout();
-    }, [id]);
-
-    const handleAddExercise = async () => {
-    if (!selectedExercise) return;
+  const handleAddExercise = async () => {
+    if (!selectedExercise) {
+      alert("Select an exercise");
+      return;
+    }
 
     try {
       await axios.post(
@@ -49,90 +49,152 @@ function WorkoutDetail(){
           workout: Number(id),
           exercise_id: parseInt(selectedExercise),
           order_index: workout.workout_exercises.length + 1,
-          notes: notes,
+          notes,
         }
       );
-      console.log(workout);
 
       setSelectedExercise("");
       setNotes("");
-
-      fetchWorkout(); // refresh state
+      fetchWorkout();
     } catch (err) {
       console.error(err.response?.data || err);
     }
   };
 
-
   if (loading) return <p>Loading...</p>;
   if (!workout) return <p>Workout not found</p>;
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Workout on {workout.date}</h2>
-      <p>{workout.remark}</p>
-
-      <h3>Focus</h3>
-      
-      <ul>
-        {workout.focus_body_parts.map((bp) => (
-          <li key={bp.id}>{bp.name}</li>
-        ))}
-      </ul>
-
-      <hr />
-
-      <h3>Add Exercise</h3>
-
-      <select
-        value={selectedExercise}
-        onChange={(e) => setSelectedExercise(e.target.value)}
+    <div>
+      {/* Header */}
+      <div
+        style={{
+          background: "white",
+          padding: "20px",
+          borderRadius: "10px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          marginBottom: "20px",
+        }}
       >
-        <option value="">Select exercise</option>
-        {exercises.map((ex) => (
-          <option key={ex.id} value={ex.id}>
-            {ex.name}
-          </option>
-        ))}
-      </select>
+        <h2 style={{ marginBottom: "10px" }}>
+          Workout on {workout.date}
+        </h2>
 
-      <br />
-      <br />
+        <p style={{ color: "#6b7280" }}>
+          {workout.remark || "No remark"}
+        </p>
 
-      <textarea
-        placeholder="Notes"
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-      />
+        {/* Focus Body Parts */}
+        <div style={{ marginTop: "12px" }}>
+          {workout.focus_body_parts.map((bp) => (
+            <span
+              key={bp.id}
+              style={{
+                background: "#e0f2fe",
+                color: "#0369a1",
+                padding: "4px 8px",
+                borderRadius: "12px",
+                fontSize: "12px",
+                marginRight: "6px",
+              }}
+            >
+              {bp.name}
+            </span>
+          ))}
+        </div>
 
-      <br />
-      <br />
+        <button
+          onClick={() => navigate(`/workouts/${id}/summary`)}
+          style={{
+            marginTop: "15px",
+            padding: "8px 16px",
+            borderRadius: "6px",
+            border: "none",
+            background: "#2563eb",
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          Done
+        </button>
+      </div>
 
-      <button onClick={handleAddExercise}>
-        Add Exercise
-      </button>
+      {/* Add Exercise Card */}
+      <div
+        style={{
+          background: "white",
+          padding: "20px",
+          borderRadius: "10px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          marginBottom: "20px",
+        }}
+      >
+        <h3 style={{ marginBottom: "12px" }}>Add Exercise</h3>
 
-      <button style={{ marginTop: "20px" }}
-      onClick={()=> navigate(`/workouts/${id}/summary`)}>
-        Done
-      </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <select
+            value={selectedExercise}
+            onChange={(e) => setSelectedExercise(e.target.value)}
+            style={{
+              padding: "6px",
+              borderRadius: "4px",
+              border: "1px solid #ddd",
+              flex: 1,
+            }}
+          >
+            <option value="">Select exercise</option>
+            {exercises.map((ex) => (
+              <option key={ex.id} value={ex.id}>
+                {ex.name}
+              </option>
+            ))}
+          </select>
 
-      <hr />
+          <input
+            type="text"
+            placeholder="Notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            style={{
+              padding: "6px",
+              borderRadius: "4px",
+              border: "1px solid #ddd",
+              flex: 2,
+            }}
+          />
 
-      <h3>Exercises</h3>
+          <button
+            onClick={handleAddExercise}
+            style={{
+              padding: "6px 14px",
+              borderRadius: "4px",
+              border: "none",
+              background: "#2563eb",
+              color: "white",
+              cursor: "pointer",
+            }}
+          >
+            Add
+          </button>
+        </div>
+      </div>
 
-      {workout.workout_exercises.length === 0 && (
-        <p>No exercises added yet.</p>
+      {/* Exercises */}
+      <h3 style={{ marginBottom: "10px" }}>Exercises</h3>
+
+      {workout.workout_exercises.length === 0 ? (
+        <p style={{ color: "#6b7280" }}>
+          No exercises added yet.
+        </p>
+      ) : (
+        workout.workout_exercises.map((we) => (
+          <ExerciseCard
+            key={we.id}
+            we={we}
+            refreshWorkout={fetchWorkout}
+          />
+        ))
       )}
-
-      {workout.workout_exercises.map((we) => (
-        <ExerciseCard
-          key={we.id}
-          we={we}
-          refreshWorkout={fetchWorkout}
-        />
-      ))}
-
     </div>
   );
 }

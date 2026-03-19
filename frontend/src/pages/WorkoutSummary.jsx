@@ -1,15 +1,13 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 function WorkoutSummary() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [workout, setWorkout] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -39,53 +37,135 @@ function WorkoutSummary() {
   });
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px" }}>
-        
+    <div>
+      {/* Header Card */}
+      <div
+        style={{
+          background: "white",
+          padding: "20px",
+          borderRadius: "10px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          marginBottom: "20px",
+        }}
+      >
+        <h2 style={{ marginBottom: "10px" }}>
+          Workout Summary — {workout.date}
+        </h2>
 
-      
-      <h2>Workout Summary</h2>
-      <button style={{ marginTop: "20px" }}
-            onClick={()=> navigate(`/`)}>
-        All
-      </button>
+        <p style={{ color: "#6b7280" }}>
+          {workout.remark || "No remark"}
+        </p>
 
-      <p><strong>Date:</strong> {workout.date}</p>
-      <p><strong>Remark:</strong> {workout.remark}</p>
-
-      <h3>Focus</h3>
-      {workout.focus_body_parts.length === 0 && (
-        <p>No focus specified</p>
-      )}
-
-      <ul>
-        {workout.focus_body_parts.map((bp) => (
-          <li key={bp.id}>{bp.name}</li>
-        ))}
-      </ul>
-
-      <hr />
-
-      <h3>Exercises</h3>
-
-      {workout.workout_exercises.map((we) => (
-        <div key={we.id} style={{ marginBottom: "20px" }}>
-          <strong>{we.exercise.name}</strong>
-
-          <ul>
-            {we.sets.map((set) => (
-              <li key={set.id}>
-                Set {set.set_number}: {set.weight} kg × {set.reps}
-              </li>
-            ))}
-          </ul>
+        {/* Focus Tags */}
+        <div style={{ marginTop: "12px" }}>
+          {workout.focus_body_parts.map((bp) => (
+            <span
+              key={bp.id}
+              style={{
+                background: "#e0f2fe",
+                color: "#0369a1",
+                padding: "4px 8px",
+                borderRadius: "12px",
+                fontSize: "12px",
+                marginRight: "6px",
+              }}
+            >
+              {bp.name}
+            </span>
+          ))}
         </div>
-      ))}
 
-      <hr />
+        {/* Totals */}
+        <div style={{ marginTop: "16px" }}>
+          <strong>Total Sets:</strong> {totalSets}
+          <br />
+          <strong>Total Volume:</strong> {totalVolume} kg
+        </div>
+        <div style={{ marginTop: "16px", display: "flex", gap: "10px" }}>
+            <button
+            onClick={() => navigate(`/workouts/${id}`)}
+            style={{
+            marginTop: "16px",
+            padding: "8px 16px",
+            borderRadius: "6px",
+            border: "none",
+            background: "#2563eb",
+            color: "white",
+            cursor: "pointer",
+          }}
+          >
+          Edit Workout
+        </button>
+        <button
+          onClick={() => navigate("/")}
+          style={{
+            marginTop: "16px",
+            padding: "8px 16px",
+            borderRadius: "6px",
+            border: "none",
+            background: "#2563eb",
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          Back to Workouts
+        </button>
+        </div>
+      </div>
 
-      <h3>Totals</h3>
-      <p>Total Sets: {totalSets}</p>
-      <p>Total Volume: {totalVolume} kg</p>
+      {/* Exercises Summary */}
+      <h3 style={{ marginBottom: "12px" }}>Exercises</h3>
+
+      {workout.workout_exercises.length === 0 ? (
+        <p style={{ color: "#6b7280" }}>
+          No exercises added.
+        </p>
+      ) : (
+        workout.workout_exercises.map((we) => (
+          <div
+            key={we.id}
+            style={{
+              background: "white",
+              padding: "18px",
+              borderRadius: "10px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+              marginBottom: "16px",
+            }}
+          >
+            <h4 style={{ marginBottom: "6px" }}>
+              {we.exercise.name}
+            </h4>
+
+            <div
+              style={{
+                background: "#f9fafb",
+                border: "1px solid #e5e7eb",
+                padding: "6px 10px",
+                borderRadius: "6px",
+                fontSize: "13px",
+                color: we.notes ? "#374151" : "#9ca3af",
+                marginBottom: "10px",
+              }}
+            >
+              {we.notes || "No notes"}
+            </div>
+
+            {we.sets.length === 0 ? (
+              <p style={{ color: "#6b7280" }}>
+                No sets recorded.
+              </p>
+            ) : (
+              <ul style={{ paddingLeft: "18px" }}>
+                {we.sets.map((set) => (
+                  <li key={set.id}>
+                    Set {set.set_number}: {set.weight} kg × {set.reps}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))
+      )}
     </div>
   );
 }
